@@ -1,80 +1,61 @@
 "use client";
 
-import { Loader2 } from "lucide-react";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { signupWithEmail } from "./action";
+import { Spinner } from "@/components/ui/spinner";
+import { signUpWithEmailAction } from "./action";
 
-export default function SignUpFrom() {
-  const [_state, action, pending] = useActionState<void, FormData>(
-    signupWithEmail,
-    undefined,
-    "/"
-  );
+const initialState = { success: false, message: "", data: {} };
+
+export const SignupForm = () => {
+  const [state, action, pending] = useActionState(signUpWithEmailAction, initialState);
+
+  useEffect(() => {
+    if (state.success) {
+      toast.success(state.message);
+    }
+    if (!state.success && state.message) {
+      toast.error(state.message);
+    }
+  }, [state]);
 
   return (
-    <Card className="z-50 max-w-md rounded-md rounded-t-none">
-      <CardHeader>
-        <CardTitle className="text-lg md:text-xl">Get started</CardTitle>
-        <CardDescription className="text-xs md:text-sm">
-          Create your account in seconds
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form action={action}>
-          <div className="grid gap-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="grid gap-2">
-                <Label htmlFor="name">Name</Label>
-                <Input
-                  id="name"
-                  name="name"
-                  placeholder="Mehedi Hasan"
-                  required
-                  type="text"
-                />
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                placeholder="mehedihasan@example.com"
-                required
-                type="email"
-              />
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                autoComplete="new-password"
-                id="password"
-                name="password"
-                placeholder="Password"
-                required
-                type="password"
-              />
-            </div>
-            <Button className="w-full" disabled={pending} type="submit">
-              {pending ? (
-                <Loader2 className="animate-spin" size={16} />
-              ) : (
-                "Create an account"
-              )}
-            </Button>
-          </div>
-        </form>
-      </CardContent>
-    </Card>
+    <form action={action}>
+      <div className="grid gap-4">
+        <div className="grid gap-2">
+          <Label htmlFor="name">Name</Label>
+          <Input disabled={pending} id="name" name="name" placeholder="Mehedi Hasan" required type="text" />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="email">Email</Label>
+          <Input disabled={pending} id="email" name="email" placeholder="mehedihasan@example.com" required type="email" />
+        </div>
+        <div className="grid gap-2">
+          <Label htmlFor="password">Password</Label>
+          <Input
+            autoComplete="new-password"
+            disabled={pending}
+            id="password"
+            name="password"
+            placeholder="**************"
+            required
+            type="password"
+          />
+        </div>
+        <Button className="w-full cursor-pointer gap-2" disabled={pending} type="submit">
+          {pending ? (
+            <>
+              <Spinner />
+              Creating account...
+            </>
+          ) : (
+            "Create an account"
+          )}
+        </Button>
+      </div>
+    </form>
   );
-}
+};
