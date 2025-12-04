@@ -30,11 +30,11 @@
 - [x] replace auth import in mount handler with `import { auth } from "@/lib/auth";`
 
 - [x] enable email and password authentication
-- [ ] create signup page (part-1)
-  - [ ] create `src/app/auth/signup/page.tsx`
-  - [ ] show submit values in `src/app/auth/signup/action.ts`
-- [ ] setup sonner
-- [ ] create signup page (part-2)
-  - [ ] add form vaidation
-  - [ ] destructive signup function
-  - [ ] showcase onError
+- [x] create signup page
+  - [x] create a rsc `src/app/auth/signup/page.tsx`
+  - [x] extract form and make it a client component `src/app/auth/signup/form.tsx`
+  - [x] show submit values in `src/app/auth/signup/action.ts`
+  - [x] setup sonner
+  - [x] implment server action of better-auth `src/app/auth/signup/action.ts`
+  - [x] show error message properly with toast by catching them in try catch
+  
