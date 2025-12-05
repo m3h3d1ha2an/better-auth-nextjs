@@ -2,9 +2,9 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { getSession } from "@/lib/auth/functions/get-session";
-import { SignupForm } from "./form";
+import { SigninForm } from "./form";
 
-const Signup = async () => {
+const Signin = async () => {
   const session = await getSession();
   if (session) {
     redirect("/");
@@ -13,17 +13,17 @@ const Signup = async () => {
     <div className="flex min-h-screen items-center justify-center">
       <Card className="z-50 w-full max-w-sm rounded-3xl">
         <CardHeader className="text-center">
-          <CardTitle className="text-lg md:text-xl">Create an account</CardTitle>
-          <CardDescription className="text-xs md:text-sm">Welcome! Create an account to get started.</CardDescription>
+          <CardTitle className="text-lg md:text-xl">Welcome back!</CardTitle>
+          <CardDescription className="text-xs md:text-sm">Login to your account</CardDescription>
         </CardHeader>
         <CardContent>
-          <SignupForm />
+          <SigninForm />
         </CardContent>
         <CardFooter className="flex justify-center">
           <p className="text-center text-muted-foreground text-sm">
-            Already have an account?{" "}
-            <Link className="text-primary hover:underline" href="/auth/signin">
-              Sign in
+            Don't have an account?{" "}
+            <Link className="text-primary hover:underline" href="/auth/signup">
+              Sign up
             </Link>
           </p>
         </CardFooter>
@@ -32,4 +32,4 @@ const Signup = async () => {
   );
 };
 
-export default Signup;
+export default Signin;
