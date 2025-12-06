@@ -1,17 +1,16 @@
 import { redirect } from "next/navigation";
 import { CodeBlock } from "@/components/code-block";
-import { getUser } from "@/lib/auth/functions/get-user";
+import { getUserSession } from "@/lib/get-user-session";
 
 const Profile = async () => {
-  const user = await getUser();
-
-  if (!user) {
+  const result = await getUserSession();
+  if (!result) {
     redirect("/auth/signin");
   }
 
   return (
     <main>
-      <CodeBlock data={user} />
+      <CodeBlock data={result} />
     </main>
   );
 };

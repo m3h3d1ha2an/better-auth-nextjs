@@ -1,15 +1,14 @@
 import { redirect } from "next/navigation";
-import { getUser } from "@/lib/auth/functions/get-user";
+import { getUserSession } from "@/lib/get-user-session";
 
 const LandingPage = async () => {
-  const user = await getUser();
-
-  if (!user) {
+  const result = await getUserSession();
+  if (!result) {
     redirect("/auth/signin");
   }
   return (
     <main>
-      <h3>Welcome {user.name}!</h3>
+      <h3>Welcome {result.user.name}!</h3>
     </main>
   );
 };

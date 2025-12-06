@@ -11,14 +11,15 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { SignoutAction } from "@/lib/auth/actions/signout";
-import { getUser } from "@/lib/auth/functions/get-user";
+import { getUserSession } from "@/lib/get-user-session";
 
 export const UserDropdown = async () => {
-  const user = await getUser();
-
-  if (!user) {
+  const result = await getUserSession();
+  if (!result) {
     return null;
   }
+
+  const user = result.user;
 
   return (
     <DropdownMenu>

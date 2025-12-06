@@ -1,11 +1,11 @@
 import { redirect } from "next/navigation";
 import { Header } from "@/components/header/header";
-import { getUser } from "@/lib/auth/functions/get-user";
+import { getUserSession } from "@/lib/get-user-session";
 
 const ProtectedLayout = async ({ children }: { children: React.ReactNode }) => {
-  const user = await getUser();
-  if (!user) {
-    redirect("/login");
+  const result = await getUserSession();
+  if (!result) {
+    redirect("/auth/signin");
   }
   return (
     <main className="min-h-dvh space-y-4 border border-black bg-gray-100 px-16 py-8">
