@@ -14,10 +14,10 @@ export const auth = betterAuth({
       verify: verifyPassword,
     },
   },
-  plugins: [nextCookies()],
   advanced: {
     database: {
       generateId: false,
     },
   },
+  plugins: [nextCookies()],
 });
