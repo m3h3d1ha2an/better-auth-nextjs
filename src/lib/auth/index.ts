@@ -14,6 +14,9 @@ export const auth = betterAuth({
       verify: verifyPassword,
     },
   },
+  session: {
+    expiresIn: 30 * 24 * 60 * 60,
+  },
   advanced: {
     database: {
       generateId: false,
@@ -21,3 +24,6 @@ export const auth = betterAuth({
   },
   plugins: [nextCookies()],
 });
+
+export type ErrorCode = keyof typeof auth.$ERROR_CODES | "UNKNOWN"
+export type Session = typeof auth.$Infer.Session;
