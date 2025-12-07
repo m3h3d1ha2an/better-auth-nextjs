@@ -24,7 +24,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className="bg-white text-black" lang="en">
+    <html className="bg-white text-black selection:bg-black selection:text-white" lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} min-h-dvh bg-gray-50 antialiased`}>
         {children}
         <Toaster position="top-center" richColors theme="light" />

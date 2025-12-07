@@ -1,5 +1,6 @@
 "use server";
 
+import { APIError } from "better-auth/api";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 
@@ -25,8 +26,7 @@ export const signinWithEmailAction = async (_initialState: InitialState, formDat
     const result = await auth.api.signInEmail({ headers: await headers(), body: { email, password } });
     return { success: true, message: "Signin successfull. Good to see you back!", data: result };
   } catch (error) {
-    console.error(error);
-    if (error instanceof Error) {
+    if (error instanceof APIError) {
       return {
         success: false,
         message: error.message,

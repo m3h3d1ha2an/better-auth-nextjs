@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowLeft } from "lucide-react";
+import { ChevronLeft } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
@@ -42,11 +42,15 @@ export const ReturnButton = () => {
   }
 
   return (
-    <Button asChild>
-      <Link href={previousPath}>
-        <ArrowLeft />
-        {buttonLabel}
-      </Link>
-    </Button>
+    <div className="flex items-center justify-center gap-2">
+      <Button asChild size="icon">
+        <Link href={previousPath}>
+          <ChevronLeft />
+        </Link>
+      </Button>
+      <Button asChild>
+        <Link href={previousPath}>{buttonLabel}</Link>
+      </Button>
+    </div>
   );
 };

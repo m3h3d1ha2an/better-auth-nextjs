@@ -6,11 +6,11 @@ const protectedRoutes = ["/", "/profile"];
 export const proxy = (request: NextRequest) => {
   const pathname = request.nextUrl.pathname;
   const sessionCookie = getSessionCookie(request);
-  
+
   const isAuthenticated = !!sessionCookie;
   const isProtectedRoute = protectedRoutes.includes(pathname);
   const isAuthRoute = pathname.startsWith("/auth");
-  
+
   const response = NextResponse.next();
 
   if (isProtectedRoute && !isAuthenticated) {

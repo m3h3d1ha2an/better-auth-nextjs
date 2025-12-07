@@ -1,6 +1,7 @@
 "use server";
 
-import { auth } from "@/lib/auth";
+import { APIError } from "better-auth/api";
+import { auth, type ErrorCode } from "@/lib/auth";
 
 type InitialState = {
   success: boolean;
@@ -54,17 +55,26 @@ export const signUpWithEmailAction = async (_initialState: InitialState, formDat
     });
     return { success: true, message: "Signup complete. Please log in to continue.", data: result };
   } catch (error) {
-    console.error(error);
-    if (error instanceof Error) {
-      return {
-        success: false,
-        message: error.message,
-        data: {},
-      };
+    if (error instanceof APIError) {
+      const errorCode = error.body ? (error.body.code as ErrorCode) : "UNKNOWN";
+      switch (errorCode) {
+        case "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL":
+          return {
+            success: false,
+            message: "Something went wrong. Please try again.",
+            data: {},
+          };
+        default:
+          return {
+            success: false,
+            message: error.message,
+            data: {},
+          };
+      }
     }
     return {
       success: false,
-      message: "An unknown error occurred",
+      message: "Internal Server Error",
       data: {},
     };
   }
