@@ -24,10 +24,15 @@ export const UserDropdown = async () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Avatar className="size-10 cursor-pointer rounded-full">
-          <AvatarImage alt={user.name} src={user.image ?? ""} />
-          <AvatarFallback className="rounded-full">U</AvatarFallback>
-        </Avatar>
+        <div
+          className="relative inline-flex rounded-full border-2 data-[role=ADMIN]:border-red-500 data-[role=SUPERADMIN]:border-blue-500 data-[role=USER]:border-green-500"
+          data-role={user.role}
+        >
+          <Avatar className="size-10 cursor-pointer">
+            <AvatarImage alt={user.name} src={user.image ?? ""} />
+            <AvatarFallback className="rounded-full">U</AvatarFallback>
+          </Avatar>
+        </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="p-0 font-normal">

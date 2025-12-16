@@ -47,6 +47,10 @@ export const SignupForm = () => {
             <EyeIcon className="absolute right-2 bottom-1.5 cursor-pointer stroke-1 text-gray-600/50" onClick={() => setShow(true)} />
           )}
         </div>
+        <div className="grid gap-2">
+          <Label htmlFor="image">Profile Picture (Optional) </Label>
+          <Input disabled={pending} id="image" name="image" type="url" />
+        </div>
         <Button className="w-full cursor-pointer gap-2" disabled={pending} type="submit">
           {pending ? (
             <>

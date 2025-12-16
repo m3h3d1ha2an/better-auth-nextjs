@@ -13,6 +13,7 @@ export const signUpWithEmailAction = async (_initialState: InitialState, formDat
   const name = String(formData.get("name"));
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
+  const image = String(formData.get("image"));
 
   if (!name.trim()) {
     return { success: false, message: "Enter a valid name", data: {} };
@@ -42,20 +43,19 @@ export const signUpWithEmailAction = async (_initialState: InitialState, formDat
     };
   }
 
-  const username = email.split("@")[0].toLowerCase();
-
   try {
     const result = await auth.api.signUpEmail({
       body: {
         name,
         email,
         password,
-        image: `https://avatar.iran.liara.run/public/boy?username=${username}`,
+        image: image || process.env.DEFAULT_IMAGE_URL,
       },
     });
     return { success: true, message: "Signup complete. Please log in to continue.", data: result };
   } catch (error) {
     if (error instanceof APIError) {
+      console.error(error);
       const errorCode = error.body ? (error.body.code as ErrorCode) : "UNKNOWN";
       switch (errorCode) {
         case "USER_ALREADY_EXISTS_USE_ANOTHER_EMAIL":

@@ -2,7 +2,6 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
-import { hashPassword, verifyPassword } from "@/lib/argon2";
 import { db } from "@/lib/db";
 import { normalizeName } from "../utils";
 
@@ -12,8 +11,16 @@ export const auth = betterAuth({
     enabled: true,
     autoSignIn: false,
     password: {
-      hash: hashPassword,
-      verify: verifyPassword,
+      hash: async (password) => await Bun.password.hash(password),
+      verify: async ({ password, hash }) => await Bun.password.verify(password, hash),
+    },
+  },
+  user: {
+    additionalFields: {
+      role: {
+        type: ["superadmin", "admin", "user"],
+        input: false,
+      },
     },
   },
   session: {
