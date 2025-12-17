@@ -1,7 +1,6 @@
 enum Role {
-  USER        @map("user")
-  ADMIN       @map("admin")
-  SUPER_ADMIN @map("superadmin")
+  User
+  Admin
 }
 
 model User {
@@ -13,7 +12,7 @@ model User {
   email         String  @unique
   emailVerified Boolean @default(false)
   image         String?
-  role          Role    @default(USER)
+  role          Role    @default(User)
 
   sessions Session[]
   accounts Account[]

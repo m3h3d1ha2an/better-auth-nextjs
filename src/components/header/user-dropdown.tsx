@@ -25,7 +25,7 @@ export const UserDropdown = async () => {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <div
-          className="relative inline-flex rounded-full border-2 data-[role=ADMIN]:border-red-500 data-[role=SUPERADMIN]:border-blue-500 data-[role=USER]:border-green-500"
+          className="relative inline-flex rounded-full border-2 data-[role=Admin]:border-blue-500 data-[role=User]:border-green-500"
           data-role={user.role}
         >
           <Avatar className="size-10 cursor-pointer">

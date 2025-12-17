@@ -20,7 +20,6 @@ export const proxy = (request: NextRequest) => {
   if (isAuthRoute && isAuthenticated) {
     return NextResponse.redirect(new URL("/", request.url));
   }
-
   return response;
 };
 

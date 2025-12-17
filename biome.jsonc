@@ -1,6 +1,13 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "root": true,
+  "linter": {
+    "rules": {
+      "performance": {
+        "noNamespaceImport": "off"
+      }
+    }
+  },
   "formatter": {
     "lineWidth": 140
   },

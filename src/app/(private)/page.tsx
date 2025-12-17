@@ -1,31 +1,101 @@
+import { cacheLife } from "next/cache";
 import { Suspense } from "react";
+import { DeleteUser } from "@/components/delete-user";
+
 import { Skeleton } from "@/components/ui/skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { db } from "@/lib/db";
 import { getUserSession } from "@/lib/get-user-session";
 
-const LandingPage = () => (
-  <main className="flex min-h-[calc(100dvh-9rem)] items-center justify-center font-medium text-5xl">
-    <Suspense fallback={<Skeleton className="h-10 w-40" />}>
-      <WelcomeMessage />
+const DashboardPage = () => (
+  <main className="space-y-8 [&:has(>:only-child)]:flex [&:has(>:only-child)]:min-h-[calc(100dvh-9rem)] [&:has(>:only-child)]:items-center [&:has(>:only-child)]:justify-center">
+    <Suspense fallback={<WelcomeSkeleton />}>
+      <Message />
+    </Suspense>
+    <Suspense fallback={<ContentSkeleton />}>
+      <Content />
     </Suspense>
   </main>
 );
 
-const WelcomeMessage = async () => {
+const Message = async () => {
   const result = await getUserSession();
   if (!result?.user) {
-    return <h3>Please sign in</h3>;
+    return null;
   }
   return (
-    <h3>
+    <h1 className="text-center data-[role=Admin]:text-3xl data-[role=User]:text-4xl" data-role={result.user.role}>
       Welcome{" "}
-      <span
-        className="font-semibold data-[role=ADMIN]:text-red-500 data-[role=SUPERADMIN]:text-blue-500 data-[role=USER]:text-green-500"
-        data-role={result.user.role}
-      >
+      <span className="font-semibold data-[role=Admin]:text-blue-500 data-[role=User]:text-green-500" data-role={result.user.role}>
         {result.user.name}!
       </span>
-    </h3>
+    </h1>
   );
 };
 
-export default LandingPage;
+const Content = async () => {
+  const result = await getUserSession();
+  if (!result?.user || result.user.role !== "Admin") {
+    return null;
+  }
+
+  return <UserTable />;
+};
+
+const UserTable = async () => {
+  "use cache";
+  cacheLife("minutes");
+
+  const users = await db.user.findMany({
+    orderBy: { name: "asc" },
+  });
+
+  return (
+    <Table className="mx-auto max-w-7xl border border-gray-300 text-lg">
+      <TableHeader>
+        <TableRow className="bg-muted/50">
+          <TableHead className="font-semibold">ID</TableHead>
+          <TableHead className="font-semibold">Name</TableHead>
+          <TableHead className="font-semibold">Email</TableHead>
+          <TableHead className="font-semibold">Role</TableHead>
+          <TableHead className="text-center font-semibold">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {users.map((user) => (
+          <TableRow className="hover:bg-muted/30" key={user.id}>
+            <TableCell className="font-mono text-sm">{user.id.slice(0, 8)}</TableCell>
+            <TableCell className="font-medium">{user.name}</TableCell>
+            <TableCell className="text-muted-foreground">{user.email}</TableCell>
+            <TableCell>
+              <span
+                className="inline-flex rounded-full px-2 py-1 font-semibold text-xs data-[role=Admin]:bg-blue-100 data-[role=User]:bg-green-100 data-[role=Admin]:text-blue-800 data-[role=User]:text-green-800 dark:data-[role=Admin]:bg-blue-900 dark:data-[role=User]:bg-green-900 dark:data-[role=Admin]:text-blue-200 dark:data-[role=User]:text-green-200"
+                data-role={user.role}
+              >
+                {user.role}
+              </span>
+            </TableCell>
+            <TableCell className="text-center">
+              <DeleteUser user={user} />
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+};
+
+const WelcomeSkeleton = () => (
+  <div className="flex justify-center">
+    <Skeleton className="h-9 w-80" />
+  </div>
+);
+
+const ContentSkeleton = () => (
+  <div className="space-y-4">
+    <Skeleton className="h-8 w-48" />
+    <Skeleton className="h-96 w-full" />
+  </div>
+);
+
+export default DashboardPage;
