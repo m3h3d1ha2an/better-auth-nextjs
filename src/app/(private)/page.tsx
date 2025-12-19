@@ -1,11 +1,10 @@
-import { cacheLife } from "next/cache";
 import { Suspense } from "react";
 import { DeleteUser } from "@/components/delete-user";
 
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { db } from "@/lib/db";
 import { getUserSession } from "@/lib/get-user-session";
+import { getUsersFromBetterAuth } from "@/lib/get-users-from-ba";
 
 const DashboardPage = () => (
   <main className="space-y-8 [&:has(>:only-child)]:flex [&:has(>:only-child)]:min-h-[calc(100dvh-9rem)] [&:has(>:only-child)]:items-center [&:has(>:only-child)]:justify-center">
@@ -43,13 +42,8 @@ const Content = async () => {
 };
 
 const UserTable = async () => {
-  "use cache";
-  cacheLife("minutes");
-
-  const users = await db.user.findMany({
-    orderBy: { name: "asc" },
-  });
-
+  const { users } = await getUsersFromBetterAuth();
+  const sorted = [...users].sort((a, b) => Number(b.role === "Admin") - Number(a.role === "Admin"));
   return (
     <Table className="mx-auto max-w-7xl border border-gray-300 text-lg">
       <TableHeader>
@@ -62,7 +56,7 @@ const UserTable = async () => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {users.map((user) => (
+        {sorted.map((user) => (
           <TableRow className="hover:bg-muted/30" key={user.id}>
             <TableCell className="font-mono text-sm">{user.id.slice(0, 8)}</TableCell>
             <TableCell className="font-medium">{user.name}</TableCell>

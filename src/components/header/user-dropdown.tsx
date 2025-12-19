@@ -1,4 +1,4 @@
-import { LogOutIcon, Settings, UserRound } from "lucide-react";
+import { Settings, UserRound } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -10,8 +10,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { SignoutAction } from "@/lib/auth/actions/signout";
 import { getUserSession } from "@/lib/get-user-session";
+import { SignoutButton } from "../signout-button";
 
 export const UserDropdown = async () => {
   const result = await getUserSession();
@@ -55,10 +55,7 @@ export const UserDropdown = async () => {
           </DropdownMenuItem>
         </DropdownMenuGroup>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer text-red-600!" onClick={SignoutAction}>
-          <LogOutIcon className="text-red-600!" />
-          Log out
-        </DropdownMenuItem>
+        <SignoutButton />
       </DropdownMenuContent>
     </DropdownMenu>
   );

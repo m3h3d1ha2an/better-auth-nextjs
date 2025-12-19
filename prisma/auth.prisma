@@ -9,10 +9,13 @@ model User {
   updatedAt DateTime @updatedAt
 
   name          String
-  email         String  @unique
-  emailVerified Boolean @default(false)
+  email         String    @unique
+  emailVerified Boolean   @default(false)
   image         String?
-  role          Role    @default(User)
+  role          Role      @default(User)
+  banned        Boolean?  @default(false)
+  banReason     String?
+  banExpires    DateTime?
 
   sessions Session[]
   accounts Account[]
@@ -26,10 +29,11 @@ model Session {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  token     String   @unique
-  expiresAt DateTime
-  ipAddress String?
-  userAgent String?
+  token          String   @unique
+  expiresAt      DateTime
+  ipAddress      String?
+  userAgent      String?
+  impersonatedBy String?
 
   userId String
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)

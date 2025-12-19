@@ -1,5 +1,6 @@
 "use client";
 
+import type { UserWithRole } from "better-auth/plugins";
 import { Trash2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -16,10 +17,9 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import type { Session } from "@/lib/auth";
 import { deleteUserAction } from "@/lib/delete-user-action";
 
-export const DeleteUser = ({ user }: { user: Session["user"] }) => {
+export const DeleteUser = ({ user }: { user: UserWithRole }) => {
   const [open, setOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
   const handleDelete = async () => {

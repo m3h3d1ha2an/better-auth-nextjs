@@ -2,7 +2,7 @@
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useActionState, useEffect, useState } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,12 +17,16 @@ export const SignupForm = () => {
   const router = useRouter();
   const [state, action, pending] = useActionState(signUpWithEmailAction, initialState);
 
+  const hasRedirected = useRef(false);
+
   useEffect(() => {
-    if (state.success) {
+    // Only redirect once to prevent duplicate toasts on back navigation
+    if (state.success && !hasRedirected.current) {
+      hasRedirected.current = true;
       toast.success(state.message);
       router.push("/auth/signin");
     }
-  }, [state, router]);
+  }, [state.success, state.message, router]);
 
   return (
     <form action={action} autoComplete="off">

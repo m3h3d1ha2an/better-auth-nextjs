@@ -2,8 +2,11 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
+import { admin } from "better-auth/plugins";
+import { ac, roles } from "@/lib/auth/permission";
 import { db } from "@/lib/db";
-import { normalizeName } from "../utils";
+import { Role } from "@/lib/db/prisma/enums";
+import { normalizeName } from "@/lib/utils";
 
 export const auth = betterAuth({
   database: prismaAdapter(db, { provider: "postgresql" }),
@@ -15,23 +18,6 @@ export const auth = betterAuth({
       verify: async ({ password, hash }) => await Bun.password.verify(password, hash),
     },
   },
-  user: {
-    additionalFields: {
-      role: {
-        type: ["Admin", "User"],
-        input: false,
-      },
-    },
-  },
-  session: {
-    expiresIn: 30 * 24 * 60 * 60,
-  },
-  advanced: {
-    database: {
-      generateId: false,
-    },
-  },
-  plugins: [nextCookies()],
   hooks: {
     // biome-ignore  lint/suspicious/useAwait: <betterauth requires async>
     before: createAuthMiddleware(async (ctx) => {
@@ -50,6 +36,45 @@ export const auth = betterAuth({
       return { context: { ...ctx, body: { ...ctx.body, name } } };
     }),
   },
+  databaseHooks: {
+    user: {
+      create: {
+        // biome-ignore  lint/suspicious/useAwait: <betterauth requires async>
+        before: async (user) => {
+          const adminEmails = process.env.ADMIN_EMAILS?.split(";") ?? [];
+          if (adminEmails.includes(user.email)) {
+            return { data: { ...user, role: "Admin" } };
+          }
+          return { data: user };
+        },
+      },
+    },
+  },
+  user: {
+    additionalFields: {
+      role: {
+        type: ["Admin", "User"],
+        input: false,
+      },
+    },
+  },
+  session: {
+    expiresIn: 30 * 24 * 60 * 60,
+  },
+  advanced: {
+    database: {
+      generateId: false,
+    },
+  },
+  plugins: [
+    nextCookies(),
+    admin({
+      defaultRole: Role.User,
+      adminRoles: [Role.Admin],
+      ac,
+      roles,
+    }),
+  ],
 });
 
 export type ErrorCode = keyof typeof auth.$ERROR_CODES | "UNKNOWN";

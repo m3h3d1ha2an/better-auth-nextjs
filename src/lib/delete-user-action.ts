@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { db } from "./db";
+import { headers } from "next/headers";
+import { auth } from "./auth";
 import { getUserSession } from "./get-user-session";
 
 export const deleteUserAction = async (userId: string) => {
@@ -13,9 +14,7 @@ export const deleteUserAction = async (userId: string) => {
     throw new Error("Forbidden: Unauthorized Access");
   }
   try {
-    await db.user.delete({
-      where: { id: userId, role: "User" },
-    });
+    await auth.api.removeUser({ body: { userId }, headers: await headers() });
     revalidatePath("/");
     return { success: true, message: "User deleted successfully" };
   } catch (error) {
