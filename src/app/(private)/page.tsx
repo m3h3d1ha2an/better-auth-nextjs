@@ -1,8 +1,9 @@
 import { Suspense } from "react";
 import { DeleteUser } from "@/components/delete-user";
-
+import { RoleSelect } from "@/components/role-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import type { Role } from "@/lib/db/prisma/enums";
 import { getUserSession } from "@/lib/get-user-session";
 import { getUsersFromBetterAuth } from "@/lib/get-users-from-ba";
 
@@ -57,17 +58,18 @@ const UserTable = async () => {
       </TableHeader>
       <TableBody>
         {sorted.map((user) => (
-          <TableRow className="hover:bg-muted/30" key={user.id}>
+          <TableRow className="hover:bg-gray-200" key={user.id}>
             <TableCell className="font-mono text-sm">{user.id.slice(0, 8)}</TableCell>
             <TableCell className="font-medium">{user.name}</TableCell>
             <TableCell className="text-muted-foreground">{user.email}</TableCell>
             <TableCell>
-              <span
+              {/*<span
                 className="inline-flex rounded-full px-2 py-1 font-semibold text-xs data-[role=Admin]:bg-blue-100 data-[role=User]:bg-green-100 data-[role=Admin]:text-blue-800 data-[role=User]:text-green-800 dark:data-[role=Admin]:bg-blue-900 dark:data-[role=User]:bg-green-900 dark:data-[role=Admin]:text-blue-200 dark:data-[role=User]:text-green-200"
                 data-role={user.role}
               >
                 {user.role}
-              </span>
+              </span>*/}
+              <RoleSelect role={user.role as Role} userId={user.id} />
             </TableCell>
             <TableCell className="text-center">
               <DeleteUser user={user} />

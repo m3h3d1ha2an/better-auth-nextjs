@@ -43,7 +43,7 @@ export const auth = betterAuth({
         before: async (user) => {
           const adminEmails = process.env.ADMIN_EMAILS?.split(";") ?? [];
           if (adminEmails.includes(user.email)) {
-            return { data: { ...user, role: "Admin" } };
+            return { data: { ...user, role: Role.Admin } };
           }
           return { data: user };
         },
@@ -53,7 +53,7 @@ export const auth = betterAuth({
   user: {
     additionalFields: {
       role: {
-        type: ["Admin", "User"],
+        type: ["Admin", "User"] as Role[],
         input: false,
       },
     },

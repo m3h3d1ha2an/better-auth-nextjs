@@ -1,6 +1,6 @@
 import { createAccessControl } from "better-auth/plugins/access";
 import { adminAc, defaultStatements } from "better-auth/plugins/admin/access";
-import { Role } from "../db/prisma/enums";
+import { Role } from "@/lib/db/prisma/enums";
 
 const statement = {
   ...defaultStatements,
