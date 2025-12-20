@@ -3,9 +3,9 @@ import { DeleteUser } from "@/components/delete-user";
 import { RoleSelect } from "@/components/role-select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { getUserSession } from "@/lib/auth/queries/get-user-session";
+import { getUsersFromBetterAuth } from "@/lib/auth/queries/get-users-from-ba";
 import type { Role } from "@/lib/db/prisma/enums";
-import { getUserSession } from "@/lib/get-user-session";
-import { getUsersFromBetterAuth } from "@/lib/get-users-from-betterauth";
 
 const DashboardPage = () => (
   <main className="space-y-8 [&:has(>:only-child)]:flex [&:has(>:only-child)]:min-h-[calc(100dvh-9rem)] [&:has(>:only-child)]:items-center [&:has(>:only-child)]:justify-center">

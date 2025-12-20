@@ -1,4 +1,5 @@
 import { hash, type Options, verify } from "@node-rs/argon2";
+import { render } from "@react-email/components";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
@@ -7,12 +8,20 @@ import { admin } from "better-auth/plugins";
 import { ac, roles } from "@/lib/auth/permission";
 import { db } from "@/lib/db";
 import { Role } from "@/lib/db/prisma/enums";
+import { transporter } from "@/lib/email/nodemailer";
+import { EmailConfirmation } from "@/lib/email/templates/email-confirmation";
 import { normalizeName } from "@/lib/utils";
+// import { getTestMessageUrl } from "nodemailer";
 
-const options: Options = { memoryCost: 19_456, timeCost: 2, outputLen: 32, parallelism: 1 };
+const options: Options = {
+  memoryCost: 19_456,
+  timeCost: 2,
+  outputLen: 32,
+  parallelism: 1,
+};
 
 export const auth = betterAuth({
-  baseURL: process.env.BASE_APPLICATION_URL,
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
   database: prismaAdapter(db, { provider: "postgresql" }),
   emailAndPassword: {
     enabled: true,
@@ -21,16 +30,37 @@ export const auth = betterAuth({
       hash: async (password) => await hash(password, options),
       verify: async ({ hash: hashed, password }) => await verify(hashed, password, options),
     },
+    requireEmailVerification: true,
+  },
+  emailVerification: {
+    sendOnSignUp: true,
+    expiresIn: 60 * 5,
+    autoSignInAfterVerification: true,
+    sendVerificationEmail: async ({ user, url }) => {
+      const emailHtml = await render(EmailConfirmation(url));
+      const emailOptions = {
+        from: `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`,
+        to: user.email,
+        subject: "BetterAuth Next.js - Email Verification",
+        html: emailHtml,
+      };
+      try {
+        await transporter.sendMail(emailOptions);
+        // console.log("✅ Verification email sent:", result);
+        // const previewUrl = getTestMessageUrl(result);
+        // console.log("Preview URL: %s", previewUrl);
+      } catch (error) {
+        console.error("❌ Failed to send verification email:", error);
+        throw error; // Re-throw to let Better Auth handle it
+      }
+    },
   },
   socialProviders: {
     google: {
-      enabled: true,
-      prompt: "select_account",
       clientId: String(process.env.GOOGLE_CLIENT_ID),
       clientSecret: String(process.env.GOOGLE_CLIENT_SECRET),
     },
     github: {
-      enabled: true,
       clientId: String(process.env.GITHUB_CLIENT_ID),
       clientSecret: String(process.env.GITHUB_CLIENT_SECRET),
     },

@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getUserSession } from "@/lib/get-user-session";
+import { getUserSession } from "@/lib/auth/queries/get-user-session";
 
 type AuthGuardProps = {
   children: React.ReactNode;

@@ -17,7 +17,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
-import { deleteUserAction } from "@/lib/delete-user-action";
+import { deleteUserAction } from "@/lib/auth/actions/delete-user-action";
 
 export const DeleteUser = ({ user }: { user: UserWithRole }) => {
   const [open, setOpen] = useState(false);

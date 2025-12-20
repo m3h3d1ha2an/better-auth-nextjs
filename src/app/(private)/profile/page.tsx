@@ -1,6 +1,6 @@
 import { Suspense } from "react";
 import { CodeBlock } from "@/components/code-block";
-import { getUserSession } from "@/lib/get-user-session";
+import { getUserSession } from "@/lib/auth/queries/get-user-session";
 
 const ProfilePage = () => (
   <Suspense>

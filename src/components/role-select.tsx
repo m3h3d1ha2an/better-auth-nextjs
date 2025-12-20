@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { changeUserRole } from "@/lib/change-user-role";
+import { changeUserRole } from "@/lib/auth/actions/change-user-role";
 import { Role } from "@/lib/db/prisma/enums";
 
 export const RoleSelect = ({ userId, role }: { userId: string; role: Role }) => {

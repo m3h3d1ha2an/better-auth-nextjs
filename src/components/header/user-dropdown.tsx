@@ -1,5 +1,6 @@
 import { Settings, UserRound } from "lucide-react";
 import Link from "next/link";
+import { SignoutButton } from "@/components/signout-button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -10,8 +11,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getUserSession } from "@/lib/auth/functions/get-user-session";
-import { SignoutButton } from "../signout-button";
+import { getUserSession } from "@/lib/auth/queries/get-user-session";
 
 export const UserDropdown = async () => {
   const result = await getUserSession();

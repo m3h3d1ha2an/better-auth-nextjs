@@ -2,8 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { auth } from "./auth";
-import { getUserSession } from "./get-user-session";
+import { auth } from "@/lib/auth";
+import { getUserSession } from "@/lib/auth/queries/get-user-session";
 
 export const deleteUserAction = async (userId: string) => {
   const result = await getUserSession();
