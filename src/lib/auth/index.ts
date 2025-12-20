@@ -1,3 +1,4 @@
+import { hash, type Options, verify } from "@node-rs/argon2";
 import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
@@ -8,25 +9,26 @@ import { db } from "@/lib/db";
 import { Role } from "@/lib/db/prisma/enums";
 import { normalizeName } from "@/lib/utils";
 
+const options: Options = { memoryCost: 19_456, timeCost: 2, outputLen: 32, parallelism: 1 };
+
 export const auth = betterAuth({
   database: prismaAdapter(db, { provider: "postgresql" }),
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
     password: {
-      hash: async (password) => await Bun.password.hash(password),
-      verify: async ({ password, hash }) => await Bun.password.verify(password, hash),
+      hash: async (password) => await hash(password, options),
+      verify: async ({ hash: hashed, password }) => await verify(hashed, password, options),
     },
   },
   hooks: {
-    // biome-ignore  lint/suspicious/useAwait: <betterauth requires async>
     before: createAuthMiddleware(async (ctx) => {
       if (ctx.path !== "/sign-up/email") {
         return;
       }
       const email = String(ctx.body.email);
       const domain = email.split("@")[1];
-      const VALID_DOMAINS = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "protonmail.com", "proton.me"];
+      const VALID_DOMAINS = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "protonmail.com", "proton.me", "etlimited.net"];
       if (!VALID_DOMAINS.includes(domain)) {
         throw new APIError("BAD_REQUEST", {
           message: "Email must end with popular domains (e.g., gmail.com, outlook.com)",
@@ -39,7 +41,6 @@ export const auth = betterAuth({
   databaseHooks: {
     user: {
       create: {
-        // biome-ignore  lint/suspicious/useAwait: <betterauth requires async>
         before: async (user) => {
           const adminEmails = process.env.ADMIN_EMAILS?.split(";") ?? [];
           if (adminEmails.includes(user.email)) {
