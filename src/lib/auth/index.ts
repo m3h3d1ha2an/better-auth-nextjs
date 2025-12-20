@@ -12,6 +12,7 @@ import { normalizeName } from "@/lib/utils";
 const options: Options = { memoryCost: 19_456, timeCost: 2, outputLen: 32, parallelism: 1 };
 
 export const auth = betterAuth({
+  baseURL: process.env.BASE_APPLICATION_URL,
   database: prismaAdapter(db, { provider: "postgresql" }),
   emailAndPassword: {
     enabled: true,
@@ -19,6 +20,19 @@ export const auth = betterAuth({
     password: {
       hash: async (password) => await hash(password, options),
       verify: async ({ hash: hashed, password }) => await verify(hashed, password, options),
+    },
+  },
+  socialProviders: {
+    google: {
+      enabled: true,
+      prompt: "select_account",
+      clientId: String(process.env.GOOGLE_CLIENT_ID),
+      clientSecret: String(process.env.GOOGLE_CLIENT_SECRET),
+    },
+    github: {
+      enabled: true,
+      clientId: String(process.env.GITHUB_CLIENT_ID),
+      clientSecret: String(process.env.GITHUB_CLIENT_SECRET),
     },
   },
   hooks: {
@@ -59,14 +73,9 @@ export const auth = betterAuth({
       },
     },
   },
-  session: {
-    expiresIn: 30 * 24 * 60 * 60,
-  },
-  advanced: {
-    database: {
-      generateId: false,
-    },
-  },
+  account: { accountLinking: { enabled: false } },
+  session: { expiresIn: 30 * 24 * 60 * 60 },
+  advanced: { database: { generateId: false } },
   plugins: [
     nextCookies(),
     admin({

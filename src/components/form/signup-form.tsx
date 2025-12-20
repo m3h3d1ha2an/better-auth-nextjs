@@ -35,9 +35,7 @@ export const SignupForm = () => {
   return (
     <form autoComplete="off" onSubmit={handleSignup}>
       {!!errorMessage && (
-        <p className="mb-4 w-full rounded-md border border-red-200 bg-red-50 p-2 text-center text-red-700 text-sm">
-          {errorMessage}
-        </p>
+        <p className="mb-4 w-full rounded-md border border-red-200 bg-red-50 p-2 text-center text-red-700 text-sm">{errorMessage}</p>
       )}
       <div className="grid gap-4">
         <div className="grid gap-2">
@@ -59,15 +57,9 @@ export const SignupForm = () => {
             type={show ? "text" : "password"}
           />
           {show ? (
-            <EyeOffIcon
-              className="absolute right-2 bottom-1.5 cursor-pointer stroke-1 text-gray-600/50"
-              onClick={() => setShow(false)}
-            />
+            <EyeOffIcon className="absolute right-2 bottom-1.5 cursor-pointer stroke-1 text-gray-600/50" onClick={() => setShow(false)} />
           ) : (
-            <EyeIcon
-              className="absolute right-2 bottom-1.5 cursor-pointer stroke-1 text-gray-600/50"
-              onClick={() => setShow(true)}
-            />
+            <EyeIcon className="absolute right-2 bottom-1.5 cursor-pointer stroke-1 text-gray-600/50" onClick={() => setShow(true)} />
           )}
         </div>
         <div className="grid gap-2">

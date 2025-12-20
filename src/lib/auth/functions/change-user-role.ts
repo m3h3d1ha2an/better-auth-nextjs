@@ -1,9 +1,9 @@
 "use server";
 
 import { headers } from "next/headers";
-import { auth } from "./auth";
-import { db } from "./db";
-import type { Role } from "./db/prisma/enums";
+import { db } from "../../db";
+import type { Role } from "../../db/prisma/enums";
+import { auth } from "..";
 
 export const changeUserRole = async (userId: string, role: Role) => {
   const result = await auth.api.userHasPermission({

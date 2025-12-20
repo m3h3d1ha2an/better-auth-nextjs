@@ -6,7 +6,7 @@ import { NextJSIcon } from "@/lib/icons/nextjs";
 
 const Signup = () => (
   <div className="flex min-h-screen items-center justify-center">
-    <Card className="z-50 w-full max-w-sm rounded-3xl">
+    <Card className="z-50 w-full max-w-sm gap-4 rounded-3xl">
       <CardHeader className="text-center">
         <div className="flex items-center justify-center gap-2">
           <Image alt="Logo" height={50} src="/betterauth.png" width={50} />

@@ -1,4 +1,4 @@
-import {  Settings, UserRound } from "lucide-react";
+import { Settings, UserRound } from "lucide-react";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -10,7 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { getUserSession } from "@/lib/get-user-session";
+import { getUserSession } from "@/lib/auth/functions/get-user-session";
 import { SignoutButton } from "../signout-button";
 
 export const UserDropdown = async () => {
@@ -24,15 +24,15 @@ export const UserDropdown = async () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <div
-          className="relative inline-flex rounded-full border-2 data-[role=Admin]:border-blue-500 data-[role=User]:border-green-500"
-          data-role={user.role}
-        >
-          <Avatar className="size-10 cursor-pointer">
-            <AvatarImage alt={user.name} src={user.image ?? ""} />
-            <AvatarFallback className="rounded-full">U</AvatarFallback>
-          </Avatar>
-        </div>
+        <Avatar className="size-10 cursor-pointer">
+          {!!user.image && <AvatarImage alt={user.name} src={user.image} />}
+          <AvatarFallback
+            className="rounded-full font-bold text-white text-xl data-[role=Admin]:bg-blue-500 data-[role=User]:bg-green-500"
+            data-role={user.role}
+          >
+            {user.name.charAt(0)}
+          </AvatarFallback>
+        </Avatar>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-56">
         <DropdownMenuLabel className="p-0 font-normal">
