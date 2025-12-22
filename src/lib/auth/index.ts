@@ -5,13 +5,14 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins";
+import { getTestMessageUrl } from "nodemailer";
 import { ac, roles } from "@/lib/auth/permission";
 import { db } from "@/lib/db";
 import { Role } from "@/lib/db/prisma/enums";
 import { transporter } from "@/lib/email/nodemailer";
-import { EmailConfirmation } from "@/lib/email/templates/email-confirmation";
+import ResetPasswordTemplate from "@/lib/email/templates/reset-password";
+import VerifyEmailTemplate from "@/lib/email/templates/verify-email";
 import { normalizeName } from "@/lib/utils";
-// import { getTestMessageUrl } from "nodemailer";
 
 const options: Options = {
   memoryCost: 19_456,
@@ -31,24 +32,40 @@ export const auth = betterAuth({
       verify: async ({ hash: hashed, password }) => await verify(hashed, password, options),
     },
     requireEmailVerification: true,
+    sendResetPassword: async ({ user, url }) => {
+      const emailHtml = await render(ResetPasswordTemplate(url));
+      const emailOptions = {
+        from: `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`,
+        to: user.email,
+        subject: "Reset Your Password - BetterAuth Next.js",
+        html: emailHtml,
+      };
+      try {
+        const result = await transporter.sendMail(emailOptions);
+        const previewUrl = getTestMessageUrl(result);
+        console.log("Preview reset email URL: %s", previewUrl);
+      } catch (error) {
+        console.error("❌ Failed to reset password email:", error);
+        throw error; // Re-throw to let Better Auth handle it
+      }
+    },
   },
   emailVerification: {
     sendOnSignUp: true,
     expiresIn: 60 * 5,
     autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
-      const emailHtml = await render(EmailConfirmation(url));
+      const emailHtml = await render(VerifyEmailTemplate(url));
       const emailOptions = {
         from: `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`,
         to: user.email,
-        subject: "BetterAuth Next.js - Email Verification",
+        subject: "Verify Your Email Address - BetterAuth Next.js",
         html: emailHtml,
       };
       try {
-        await transporter.sendMail(emailOptions);
-        // console.log("✅ Verification email sent:", result);
-        // const previewUrl = getTestMessageUrl(result);
-        // console.log("Preview URL: %s", previewUrl);
+        const result = await transporter.sendMail(emailOptions);
+        const previewUrl = getTestMessageUrl(result);
+        console.log("Preview verification email URL: %s", previewUrl);
       } catch (error) {
         console.error("❌ Failed to send verification email:", error);
         throw error; // Re-throw to let Better Auth handle it

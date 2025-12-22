@@ -1,6 +1,7 @@
 "use client";
 
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -43,7 +44,12 @@ export const SigninForm = () => {
           <Input disabled={isPending} id="email" name="email" required type="email" />
         </div>
         <div className="relative grid gap-2">
-          <Label htmlFor="password">Password</Label>
+          <div className="flex justify-between">
+            <Label htmlFor="password">Password</Label>
+            <Link className="text-muted-foreground text-sm hover:underline" href="/auth/forgot">
+              Forgot password?
+            </Link>
+          </div>
           <Input
             autoComplete="new-password"
             disabled={isPending}
