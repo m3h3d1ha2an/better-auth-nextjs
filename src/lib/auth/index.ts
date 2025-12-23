@@ -29,12 +29,13 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     password: {
       hash: async (password) => await hash(password, options),
-      verify: async ({ hash: hashed, password }) => await verify(hashed, password, options),
+      verify: async ({ hash: hashed, password }) =>
+        await verify(hashed, password, options),
     },
     sendResetPassword: async ({ user, url }) => {
       const emailHtml = await render(ResetPasswordTemplate(url));
       const emailOptions = {
-        from: "BetterAuth Nextjs <mehedi+betterauth+nextjs@etlimited.net>",
+        from: `BetterAuth Nextjs <${process.env.EMAIL_SENDER_ADDRESS}>`,
         to: user.email,
         subject: "Reset Your Password - BetterAuth Next.js",
         html: emailHtml,
@@ -55,7 +56,7 @@ export const auth = betterAuth({
     sendVerificationEmail: async ({ user, url }) => {
       const emailHtml = await render(VerifyEmailTemplate(url));
       const emailOptions = {
-        from: "BetterAuth Nextjs <mehedi+betterauth+nextjs@etlimited.net>",
+        from: `BetterAuth Nextjs <${process.env.EMAIL_SENDER_ADDRESS}>`,
         to: user.email,
         subject: "Verify Your Email Address - BetterAuth Next.js",
         html: emailHtml,
@@ -86,10 +87,19 @@ export const auth = betterAuth({
       }
       const email = String(ctx.body.email);
       const domain = email.split("@")[1];
-      const VALID_DOMAINS = ["gmail.com", "yahoo.com", "hotmail.com", "outlook.com", "protonmail.com", "proton.me", "etlimited.net"];
+      const VALID_DOMAINS = [
+        "gmail.com",
+        "yahoo.com",
+        "hotmail.com",
+        "outlook.com",
+        "protonmail.com",
+        "proton.me",
+        "etlimited.net",
+      ];
       if (!VALID_DOMAINS.includes(domain)) {
         throw new APIError("BAD_REQUEST", {
-          message: "Email must end with popular domains (e.g., gmail.com, outlook.com)",
+          message:
+            "Email must end with popular domains (e.g., gmail.com, outlook.com)",
         });
       }
       const name = normalizeName(ctx.body.name);
