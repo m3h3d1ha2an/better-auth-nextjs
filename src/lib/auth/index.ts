@@ -5,7 +5,6 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins";
-import { getTestMessageUrl } from "nodemailer";
 import { ac, roles } from "@/lib/auth/permission";
 import { db } from "@/lib/db";
 import { Role } from "@/lib/db/prisma/enums";
@@ -27,11 +26,11 @@ export const auth = betterAuth({
   emailAndPassword: {
     enabled: true,
     autoSignIn: false,
+    requireEmailVerification: true,
     password: {
       hash: async (password) => await hash(password, options),
       verify: async ({ hash: hashed, password }) => await verify(hashed, password, options),
     },
-    requireEmailVerification: true,
     sendResetPassword: async ({ user, url }) => {
       const emailHtml = await render(ResetPasswordTemplate(url));
       const emailOptions = {
@@ -42,8 +41,7 @@ export const auth = betterAuth({
       };
       try {
         const result = await transporter.sendMail(emailOptions);
-        const previewUrl = getTestMessageUrl(result);
-        console.log("Preview reset email URL: %s", previewUrl);
+        console.log("Reset email sent:", result);
       } catch (error) {
         console.error("❌ Failed to reset password email:", error);
         throw error; // Re-throw to let Better Auth handle it
@@ -64,8 +62,7 @@ export const auth = betterAuth({
       };
       try {
         const result = await transporter.sendMail(emailOptions);
-        const previewUrl = getTestMessageUrl(result);
-        console.log("Preview verification email URL: %s", previewUrl);
+        console.log("Verification email sent:", result);
       } catch (error) {
         console.error("❌ Failed to send verification email:", error);
         throw error; // Re-throw to let Better Auth handle it
