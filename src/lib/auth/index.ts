@@ -34,7 +34,7 @@ export const auth = betterAuth({
     sendResetPassword: async ({ user, url }) => {
       const emailHtml = await render(ResetPasswordTemplate(url));
       const emailOptions = {
-        from: `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`,
+        from: "BetterAuth Nextjs <mehedi+betterauth+nextjs@etlimited.net>",
         to: user.email,
         subject: "Reset Your Password - BetterAuth Next.js",
         html: emailHtml,
@@ -55,7 +55,7 @@ export const auth = betterAuth({
     sendVerificationEmail: async ({ user, url }) => {
       const emailHtml = await render(VerifyEmailTemplate(url));
       const emailOptions = {
-        from: `${process.env.EMAIL_SENDER_NAME} <${process.env.EMAIL_SENDER_ADDRESS}>`,
+        from: "BetterAuth Nextjs <mehedi+betterauth+nextjs@etlimited.net>",
         to: user.email,
         subject: "Verify Your Email Address - BetterAuth Next.js",
         html: emailHtml,

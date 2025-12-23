@@ -1,3 +1,5 @@
+"use cache"
+
 import Image from "next/image";
 import Link from "next/link";
 import { SigninForm } from "@/components/form/signin-form";
@@ -5,7 +7,7 @@ import { OAuthButton } from "@/components/oauth-button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { NextJSIcon } from "@/lib/icons/nextjs";
 
-const Signin = () => (
+const Signin = async () => (
   <div className="flex min-h-screen items-center justify-center">
     <Card className="z-50 w-full max-w-sm gap-4 rounded-3xl">
       <CardHeader className="text-center">
@@ -22,8 +24,8 @@ const Signin = () => (
       </CardContent>
       <CardFooter className="flex flex-col justify-center gap-4">
         <div className="flex w-full items-center justify-center gap-4">
-          <OAuthButton method="signin" provider="google" />
-          <OAuthButton method="signin" provider="github" />
+          <OAuthButton provider="google" />
+          <OAuthButton provider="github" />
         </div>
         <p className="text-center text-muted-foreground text-sm">
           Don't have an account?{" "}

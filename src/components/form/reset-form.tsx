@@ -2,72 +2,40 @@
 import { EyeIcon, EyeOffIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
-import { authClient } from "@/lib/auth/client";
-import { cn } from "@/lib/utils";
+import { resetUserPassword } from "@/lib/auth/actions/reset-user-password";
 
 export const ResetForm = ({ token }: { token: string }) => {
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
-
   const router = useRouter();
 
   const handleReset = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsPending(true);
+    setErrorMessage(null);
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const password = String(formData.get("password"));
-    const confirmPassword = String(formData.get("confirm-password"));
-    if (password !== confirmPassword) {
-      setErrorMessage("Passwords do not match");
-      return;
+    const result = await resetUserPassword(formData, token);
+    if (result.success) {
+      toast.success(result.message);
+      form.reset();
+      router.push("/auth/signin");
+    } else {
+      setErrorMessage(result.message);
     }
-    if (password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters long");
-      return;
-    }
-    if (password.length > 100) {
-      setErrorMessage("Password must be less than 100 characters long");
-      return;
-    }
-    await authClient.resetPassword({
-      newPassword: password,
-      token,
-      fetchOptions: {
-        onRequest: () => {
-          setIsPending(true);
-          setErrorMessage(null);
-          setSuccessMessage(null);
-        },
-        onResponse: () => {
-          setIsPending(false);
-          setSuccessMessage("Your password has been reset successfully.");
-          form.reset();
-          router.push("/auth/signin");
-        },
-        onError: (ctx) => {
-          setErrorMessage(ctx.error.message);
-        },
-      },
-    });
+    setIsPending(false);
   };
 
   return (
     <form onSubmit={handleReset}>
-      {!!(errorMessage || successMessage) && (
-        <p
-          className={cn(
-            "mb-4 w-full rounded-md border p-2 text-center text-sm",
-            errorMessage ? "border-red-200 bg-red-50 text-red-700" : "border-green-200 bg-green-50 text-green-700"
-          )}
-        >
-          {errorMessage || successMessage}
-        </p>
+      {!!errorMessage && (
+        <p className="mb-4 w-full rounded-md border border-red-200 bg-red-50 p-2 text-center text-red-700 text-sm">{errorMessage}</p>
       )}
       <div className="grid gap-4">
         <div className="relative grid gap-2">

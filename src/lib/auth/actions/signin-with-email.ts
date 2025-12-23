@@ -2,9 +2,9 @@
 
 import { APIError } from "better-auth/api";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth, type ErrorCode } from "@/lib/auth";
 
-export const signinWithEmailAction = async (formData: FormData) => {
+export const signinWithEmail = async (formData: FormData) => {
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
 
@@ -21,8 +21,16 @@ export const signinWithEmailAction = async (formData: FormData) => {
     return { success: true, message: "Signin successfull. Good to see you back!" };
   } catch (error) {
     if (error instanceof APIError) {
-      return { success: false, message: error.message };
+      console.error(error);
+      const errorCode = error.body ? (error.body.code as ErrorCode) : "UNKNOWN";
+      switch (errorCode) {
+        default:
+          return {
+            success: false,
+            message: error.message || "Something went wrong. Please try again.",
+          };
+      }
     }
-    return { success: false, message: "An unknown error occurred" };
+    return { success: false, message: "Internal Server Error" };
   }
 };

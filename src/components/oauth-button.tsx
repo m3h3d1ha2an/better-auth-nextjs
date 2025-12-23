@@ -6,7 +6,7 @@ import { toast } from "sonner";
 import { authClient } from "@/lib/auth/client";
 import { Button } from "./ui/button";
 
-export const OAuthButton = ({ provider, method }: { provider: "google" | "github"; method: "signin" | "signup" }) => {
+export const OAuthButton = ({ provider }: { provider: "google" | "github"; }) => {
   const [isPending, setIsPending] = useState(false);
   const icon =
     provider === "google"
@@ -34,7 +34,7 @@ export const OAuthButton = ({ provider, method }: { provider: "google" | "github
     <Button
       className="w-40 rounded-lg border text-sm capitalize"
       disabled={isPending}
-      onClick={method === "signin" ? handleOAuthSignIn : undefined}
+      onClick={handleOAuthSignIn}
       variant="outline"
     >
       <Image alt={provider} height={14} src={icon} width={14} />

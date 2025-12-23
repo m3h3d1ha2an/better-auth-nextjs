@@ -3,6 +3,7 @@ import Link from "next/link";
 import { SignupForm } from "@/components/form/signup-form";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { NextJSIcon } from "@/lib/icons/nextjs";
+import { OAuthButton } from "@/components/oauth-button";
 
 const Signup = () => (
   <div className="flex min-h-screen items-center justify-center">
@@ -19,7 +20,11 @@ const Signup = () => (
       <CardContent>
         <SignupForm />
       </CardContent>
-      <CardFooter className="flex justify-center">
+      <CardFooter className="flex flex-col justify-center gap-4">
+        <div className="flex w-full items-center justify-center gap-4">
+          <OAuthButton provider="google" />
+          <OAuthButton provider="github" />
+        </div>
         <p className="text-center text-muted-foreground text-sm">
           Already have an account?{" "}
           <Link className="text-primary hover:underline" href="/auth/signin">

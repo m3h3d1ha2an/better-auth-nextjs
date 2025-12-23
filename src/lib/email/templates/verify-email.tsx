@@ -9,7 +9,7 @@ const VerifyEmailTemplate = (url: string) => (
         <Container className="mx-auto max-w-125 rounded-xl bg-gray-100 p-12 text-center">
           {/* App Name */}
           <Section className="mb-8">
-            <Text className="m-0 font-bold text-[20px] text-gray-900">Better Auth NextJS</Text>
+            <Text className="m-0 font-bold text-[20px] text-gray-900">BetterAuth NextJS</Text>
           </Section>
 
           {/* Heading */}
@@ -46,7 +46,7 @@ const VerifyEmailTemplate = (url: string) => (
 
         {/* Copyright */}
         <Section className="mt-8 text-center">
-          <Text className="m-0 text-[14px] text-gray-500">© {new Date().getFullYear()} Better Auth NextJS</Text>
+          <Text className="m-0 text-[14px] text-gray-500">© {new Date().getFullYear()} BetterAuth NextJS</Text>
         </Section>
       </Body>
     </Tailwind>

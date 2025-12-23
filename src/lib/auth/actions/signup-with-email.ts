@@ -3,11 +3,10 @@
 import { APIError } from "better-auth/api";
 import { auth, type ErrorCode } from "@/lib/auth";
 
-export const signUpWithEmailAction = async (formData: FormData) => {
+export const signUpWithEmail = async (formData: FormData) => {
   const name = String(formData.get("name"));
   const email = String(formData.get("email"));
   const password = String(formData.get("password"));
-  const image = String(formData.get("image"));
 
   if (!name.trim()) {
     return { success: false, message: "Enter a valid name" };
@@ -25,8 +24,8 @@ export const signUpWithEmailAction = async (formData: FormData) => {
     return { success: false, message: "Password should be at least 8 characters long" };
   }
 
-  if (password.length > 128) {
-    return { success: false, message: "Password should be at most 128 characters long" };
+  if (password.length > 100) {
+    return { success: false, message: "Password should be at most 100 characters long" };
   }
 
   try {
@@ -35,7 +34,7 @@ export const signUpWithEmailAction = async (formData: FormData) => {
         name,
         email,
         password,
-        image: image || process.env.DEFAULT_IMAGE_URL,
+        image: process.env.DEFAULT_IMAGE_URL,
       },
     });
     return { success: true, message: "Welcome! We’ve sent you an email. Check your inbox to get started.”" };

@@ -1,8 +1,9 @@
 "use server";
 
+import { APIError } from "better-auth";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
+import { auth, type ErrorCode } from "@/lib/auth";
 import { getUserSession } from "@/lib/auth/queries/get-user-session";
 
 export const deleteUserAction = async (userId: string) => {
@@ -18,9 +19,17 @@ export const deleteUserAction = async (userId: string) => {
     revalidatePath("/");
     return { success: true, message: "User deleted successfully" };
   } catch (error) {
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
+    if (error instanceof APIError) {
+      console.error(error);
+      const errorCode = error.body ? (error.body.code as ErrorCode) : "UNKNOWN";
+      switch (errorCode) {
+        default:
+          return {
+            success: false,
+            message: error.message || "Something went wrong. Please try again.",
+          };
+      }
     }
-    return { success: false, error: "Internal Server Error" };
+    return { success: false, message: "Internal Server Error" };
   }
 };

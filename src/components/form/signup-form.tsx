@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
-import { signUpWithEmailAction } from "@/lib/auth/actions/signup-with-email";
+import { signUpWithEmail } from "@/lib/auth/actions/signup-with-email";
 
 export const SignupForm = () => {
   const [show, setShow] = useState(false);
@@ -21,7 +21,7 @@ export const SignupForm = () => {
     setErrorMessage(null);
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const result = await signUpWithEmailAction(formData);
+    const result = await signUpWithEmail(formData);
     if (result.success) {
       toast.success(result.message);
       form.reset();
@@ -61,10 +61,6 @@ export const SignupForm = () => {
           ) : (
             <EyeIcon className="absolute right-2 bottom-1.5 cursor-pointer stroke-1 text-gray-600/50" onClick={() => setShow(true)} />
           )}
-        </div>
-        <div className="grid gap-2">
-          <Label htmlFor="image">Profile Picture (Optional) </Label>
-          <Input disabled={isPending} id="image" name="image" type="url" />
         </div>
         <Button className="w-full cursor-pointer gap-2" disabled={isPending} type="submit">
           {!!isPending && <Spinner />}

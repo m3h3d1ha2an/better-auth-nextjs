@@ -9,20 +9,21 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Spinner } from "@/components/ui/spinner";
-import { signinWithEmailAction } from "@/lib/auth/actions/signin-with-email";
+import { signinWithEmail } from "@/lib/auth/actions/signin-with-email";
 
 export const SigninForm = () => {
   const [show, setShow] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, setIsPending] = useState(false);
   const router = useRouter();
+
   const handleSignin = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsPending(true);
     setErrorMessage(null);
     const form = event.currentTarget;
     const formData = new FormData(form);
-    const result = await signinWithEmailAction(formData);
+    const result = await signinWithEmail(formData);
     if (result.success) {
       toast.success(result.message);
       form.reset();
