@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { SignupForm } from "@/components/form/signup-form";
+import { OAuthButton } from "@/components/oauth-button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { NextJSIcon } from "@/lib/icons/nextjs";
-import { OAuthButton } from "@/components/oauth-button";
 
 const Signup = () => (
   <div className="flex min-h-screen items-center justify-center">

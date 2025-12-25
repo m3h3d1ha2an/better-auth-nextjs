@@ -5,6 +5,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { APIError, createAuthMiddleware } from "better-auth/api";
 import { nextCookies } from "better-auth/next-js";
 import { admin } from "better-auth/plugins";
+import { env } from "@/env";
 import { ac, roles } from "@/lib/auth/permission";
 import { db } from "@/lib/db";
 import { Role } from "@/lib/db/prisma/enums";
@@ -21,7 +22,7 @@ const options: Options = {
 };
 
 export const auth = betterAuth({
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+  baseURL: env.NEXT_PUBLIC_BASE_URL,
   database: prismaAdapter(db, { provider: "postgresql" }),
   emailAndPassword: {
     enabled: true,
@@ -29,13 +30,12 @@ export const auth = betterAuth({
     requireEmailVerification: true,
     password: {
       hash: async (password) => await hash(password, options),
-      verify: async ({ hash: hashed, password }) =>
-        await verify(hashed, password, options),
+      verify: async ({ hash: hashed, password }) => await verify(hashed, password, options),
     },
     sendResetPassword: async ({ user, url }) => {
       const emailHtml = await render(ResetPasswordTemplate(url));
       const emailOptions = {
-        from: `BetterAuth Nextjs <${process.env.EMAIL_SENDER_ADDRESS}>`,
+        from: `BetterAuth Nextjs <${env.EMAIL_SENDER_ADDRESS}>`,
         to: user.email,
         subject: "Reset Your Password - BetterAuth Next.js",
         html: emailHtml,
@@ -56,7 +56,7 @@ export const auth = betterAuth({
     sendVerificationEmail: async ({ user, url }) => {
       const emailHtml = await render(VerifyEmailTemplate(url));
       const emailOptions = {
-        from: `BetterAuth Nextjs <${process.env.EMAIL_SENDER_ADDRESS}>`,
+        from: `BetterAuth Nextjs <${env.EMAIL_SENDER_ADDRESS}>`,
         to: user.email,
         subject: "Verify Your Email Address - BetterAuth Next.js",
         html: emailHtml,
@@ -72,12 +72,12 @@ export const auth = betterAuth({
   },
   socialProviders: {
     google: {
-      clientId: String(process.env.GOOGLE_CLIENT_ID),
-      clientSecret: String(process.env.GOOGLE_CLIENT_SECRET),
+      clientId: env.GOOGLE_CLIENT_ID,
+      clientSecret: env.GOOGLE_CLIENT_SECRET,
     },
     github: {
-      clientId: String(process.env.GITHUB_CLIENT_ID),
-      clientSecret: String(process.env.GITHUB_CLIENT_SECRET),
+      clientId: env.GITHUB_CLIENT_ID,
+      clientSecret: env.GITHUB_CLIENT_SECRET,
     },
   },
   hooks: {
@@ -85,21 +85,13 @@ export const auth = betterAuth({
       if (ctx.path !== "/sign-up/email") {
         return;
       }
-      const email = String(ctx.body.email);
+      const email = String(ctx.body.email).toLowerCase(); // Normalize email
       const domain = email.split("@")[1];
-      const VALID_DOMAINS = [
-        "gmail.com",
-        "yahoo.com",
-        "hotmail.com",
-        "outlook.com",
-        "protonmail.com",
-        "proton.me",
-        "etlimited.net",
-      ];
+      const VALID_DOMAINS = env.ALLOWED_EMAIL_DOMAINS.split(";");
+
       if (!VALID_DOMAINS.includes(domain)) {
         throw new APIError("BAD_REQUEST", {
-          message:
-            "Email must end with popular domains (e.g., gmail.com, outlook.com)",
+          message: `Email must end with allowed domains (e.g., ${VALID_DOMAINS[0]})`,
         });
       }
       const name = normalizeName(ctx.body.name);
@@ -110,7 +102,7 @@ export const auth = betterAuth({
     user: {
       create: {
         before: async (user) => {
-          const adminEmails = process.env.ADMIN_EMAILS?.split(";") ?? [];
+          const adminEmails = env.ADMIN_EMAILS?.split(";") ?? [];
           if (adminEmails.includes(user.email)) {
             return { data: { ...user, role: Role.Admin } };
           }

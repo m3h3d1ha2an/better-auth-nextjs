@@ -37,7 +37,7 @@ export const signUpWithEmail = async (formData: FormData) => {
         image: process.env.DEFAULT_IMAGE_URL,
       },
     });
-    return { success: true, message: "Welcome! We’ve sent you an email. Check your inbox to get started.”" };
+    return { success: true, message: "We’ve sent you an email. Check your inbox to get started." };
   } catch (error) {
     if (error instanceof APIError) {
       console.error(error);

@@ -31,7 +31,7 @@ export const resetUserPassword = async (formData: FormData, token: string) => {
     });
     return {
       success: true,
-      message: "Your password has been reset successfully. Please sign in with your new password.",
+      message: "Your password has been reset successfully.",
     };
   } catch (error) {
     if (error instanceof APIError) {

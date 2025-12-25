@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
-import { authClient } from "@/lib/auth/client";
+import { requestPasswordReset } from "@/lib/auth/actions/request-password-reset";
 import { cn } from "@/lib/utils";
 
 export const ForgotForm = () => {
@@ -14,27 +14,16 @@ export const ForgotForm = () => {
   const handleForgot = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
+    setIsPending(true);
     const formData = new FormData(form);
     const email = String(formData.get("email"));
-    await authClient.requestPasswordReset({
-      email,
-      redirectTo: "/auth/reset",
-      fetchOptions: {
-        onRequest: () => {
-          setIsPending(true);
-          setErrorMessage(null);
-          setSuccessMessage(null);
-        },
-        onResponse: () => {
-          setIsPending(false);
-          setSuccessMessage("Success! A password reset link has been sent to your email.");
-          form.reset();
-        },
-        onError: (ctx) => {
-          setErrorMessage(ctx.error.message);
-        },
-      },
-    });
+    const result = await requestPasswordReset(email);
+    if (result.success) {
+      setSuccessMessage(result.message);
+    } else {
+      setErrorMessage(result.message);
+    }
+    setIsPending(false);
   };
 
   return (

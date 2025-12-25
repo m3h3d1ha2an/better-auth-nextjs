@@ -4,14 +4,16 @@ import { LogOutIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
-import { authClient } from "@/lib/auth/client";
+import { signOutUserAction } from "@/lib/auth/actions/signout-user-action";
 
 export const SignoutButton = () => {
   const router = useRouter();
   const handleSignout = async () => {
-    await authClient.signOut();
-    router.push("/auth/signin");
-    toast.success("Logged out successfully!");
+    const result = await signOutUserAction();
+    if (result.success) {
+      router.push("/auth/signin");
+      toast.success("Logged out successfully!");
+    }
   };
 
   return (
